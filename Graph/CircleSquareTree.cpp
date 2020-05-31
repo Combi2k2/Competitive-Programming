@@ -28,6 +28,9 @@ void addEdge(int u,int v)   {
     a[v].pb(u);
 }
 void rebuild(int u,int p)   {
+/*  This function serves for rebuilding an initial graph into new tree in which:
+-   Every biconnected component is transformed into a node and every node of initial graph is connected to this node
+*/
     tot++;
     dfn[u] = tot;
     low[u] = tot;   st.push(u);
