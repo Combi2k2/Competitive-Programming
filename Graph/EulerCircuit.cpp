@@ -2,60 +2,52 @@
 
 using namespace std;
 
-#define pb  push_back
+#define ll  long long
+#define ld  double
 
-const int   N   = 1e5 + 1;
+#define sz(x)   (int)x.size()
+#define all(x)  x.begin(),x.end()
 
-typedef vector<int> vi;
-typedef vector<vi>  vii;
+#define pb  emplace_back
+#define X   first
+#define Y   second
 
-int tot = 0;
+const int   N   = 1 << 20;
 
-struct Edge {
-	int v;
-	int nxt;
-	Edge(int v = 0,int nxt = 0) : v(v), nxt(nxt)    {}
-}   E[N << 2];
-int t[N << 2];
-int h[N], d[N];
+typedef pair<int,int>   ii;
+
+vector<int> path;   //path contains the index of used edges in resulting order and the direction as the parity of the value
+vector<int> g[N];
+vector<ii>  E;
 
 void addEdge(int u,int v)   {
-	E[tot] = Edge(v,h[u]);  h[u] = tot++; d[u]++;
-	E[tot] = Edge(u,h[v]);  h[v] = tot++; d[v]++;
+    g[u].pb(sz(E)); E.pb(v,0);
+    g[v].pb(sz(E)); E.pb(u,0);
 }
-vii res;
 void work(int S)    {
-	if (h[S] < 0)   return;
-	vector<int> path;
-	stack<int>  st; st.push(h[S] ^ 1);
-	while (st.size())   {
-		int i = st.top();
-		int u = E[i].v;
-		for(; h[u] >= 0 && t[h[u]] ; h[u] = E[h[u]].nxt);
-		if (h[u] >= 0)  {
-			st.push(h[u]);
-			t[h[u]] = 1;    h[u] ^= 1;
-			t[h[u]] = 1;    h[u] ^= 1;
-			continue;
-		}
-		path.pb(st.top());  st.pop();
-	}
-	for(int i : path)   cout << E[i].v << " ";
-}
+    if (g[S].empty())
+        return;
+    
+    stack<int>  st;
+    st.push(g[S].back() ^ 1);
 
+    while (st.size())   {
+        int i = st.top();
+        int u = E[i].X;
+
+        for(; g[u].size() && E[g[u].back()].Y ; g[u].pop_back());
+
+        if (g[u].size())    {
+            int j = g[u].back();
+            st.push(j);
+            E[j].Y = 1; j ^= 1;
+            E[j].Y = 1; continue;
+        }
+        path.pb(i); st.pop();
+    }
+    path.pop_back();
+}
 int main()  {
-	ios_base::sync_with_stdio(0);
-	cin.tie(0); cout.tie(0);
-	
-	int n, m;   cin >> n >> m;
-	
-	memset(h,-1,sizeof h);
-	
-	while (m--) {
-		int x, y;
-		cin >> x >> y;
-		addEdge(x,y);
-	}
-	
-	work(1);
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
 }
